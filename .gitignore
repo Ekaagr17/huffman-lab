@@ -1,0 +1,7 @@
+*.exe
+*.o
+*.huff
+uploads/*
+output/*
+.DS_Store
+Thumbs.db
