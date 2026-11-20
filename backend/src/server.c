@@ -3,6 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <direct.h>
+#define make_dir(p) _mkdir(p)
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#define make_dir(p) mkdir(p, 0755)
+#endif
+
 #define MAX_RECORDS 256
 static FileRecord g_records[MAX_RECORDS];
 static size_t g_record_count = 0;
@@ -592,6 +601,10 @@ static int handle_health(struct mg_connection *conn, void *cbdata) {
 }
 
 int server_start(int port, const char *document_root) {
+    /* Ensure necessary directories exist */
+    make_dir("uploads");
+    make_dir("output");
+
     char port_str[16];
     snprintf(port_str, sizeof(port_str), "%d", port);
     

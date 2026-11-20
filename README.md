@@ -249,47 +249,68 @@ The embedded C server exposes clean REST endpoints:
 
 ## 9. Build and Execution Instructions
 
-### Prerequisites
-- GCC Compiler (MinGW GCC on Windows or native GCC on Linux/macOS)
-- GNU Make (`mingw32-make` on Windows or `make` on Linux)
-- Windows Sockets (`ws2_32`) — linked automatically by Makefile
+### A. Windows (PowerShell / Command Prompt)
 
-### Compilation Commands
+#### Prerequisites
+- MinGW-w64 GCC (`gcc --version`)
+- GNU Make (`mingw32-make`)
 
-```bash
-# 1. Clone or navigate to the repository
-cd d:/huffman-lab
+#### Compilation & Running
+```powershell
+# 1. Navigate to directory
+cd D:\huffman-lab
 
-# 2. Compile both the server and the test suite
-mingw32-make all
+# 2. Compile server and test suite
+mingw32-make
 
-# Or compile only the server:
-mingw32-make huffman_server.exe
+# 3. Start C server on port 8080
+.\huffman_server.exe 8080
 
-# Or compile and run the automated test suite:
-mingw32-make test
-```
-
-### Starting the Server
-
-```bash
-# Start server on default port 8080:
-./huffman_server.exe 8080
-
-# The server serves both the REST API and the frontend at:
+# 4. Open in Chrome / Edge
 # http://localhost:8080/
 ```
 
+---
+
+### B. macOS / Linux (Terminal)
+
+#### Prerequisites
+- Xcode Command Line Tools (on macOS, install once via terminal: `xcode-select --install`)
+- Clang or GCC (`clang --version` or `gcc --version`)
+- GNU Make (`make --version`)
+
+#### Compilation & Running
+```bash
+# 1. Clone or navigate to the repository
+cd huffman-lab
+
+# 2. Compile native Mach-O binary
+make
+
+# 3. Start C server on port 8080
+./huffman_server 8080
+
+# 4. Open in Safari / Chrome
+# http://localhost:8080/
+```
+
+> **Why .exe does not run on macOS:**
+> Windows `.exe` files are in Portable Executable (PE) x86/x64 format. macOS requires native Mach-O binaries (especially for Apple Silicon M1/M2/M3/M4 chips). Running `make` on a Mac compiles the C code directly for Darwin/macOS.
+
+---
+
 ### Command-Line Utility (CLI Mode)
 
-Huffman Lab can also be used directly from the command line:
+Huffman Lab can also be used directly from the command line without opening a browser:
 
 ```bash
-# Compress a file via CLI:
-./huffman_server.exe --compress input.txt compressed.huff
+# On Windows:
+.\huffman_server.exe --compress input.txt compressed.huff
+.\huffman_server.exe --decompress compressed.huff recovered.txt
 
-# Decompress a file via CLI:
-./huffman_server.exe --decompress compressed.huff output.txt
+# On macOS / Linux:
+./huffman_server --compress input.txt compressed.huff
+./huffman_server --decompress compressed.huff recovered.txt
 ```
 
 ---
