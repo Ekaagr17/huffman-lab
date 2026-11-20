@@ -50,8 +50,10 @@ static void send_json_response(struct mg_connection *conn, int status_code, cJSO
               "Content-Type: application/json; charset=utf-8\r\n"
               "Content-Length: %lu\r\n"
               "Access-Control-Allow-Origin: *\r\n"
+              "Access-Control-Allow-Private-Network: true\r\n"
+              "Access-Control-Allow-Private-Network: true\r\n"
               "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
-              "Access-Control-Allow-Headers: Content-Type\r\n"
+              "Access-Control-Allow-Headers: *\r\n"
               "Connection: close\r\n\r\n",
               status_code, status_text, (unsigned long)len);
               
@@ -137,8 +139,10 @@ static int handle_analyze(struct mg_connection *conn, void *cbdata) {
         mg_printf(conn,
                   "HTTP/1.1 200 OK\r\n"
                   "Access-Control-Allow-Origin: *\r\n"
+              "Access-Control-Allow-Private-Network: true\r\n"
+                  "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Methods: POST, OPTIONS\r\n"
-                  "Access-Control-Allow-Headers: Content-Type\r\n"
+                  "Access-Control-Allow-Headers: *\r\n"
                   "Content-Length: 0\r\n\r\n");
         return 200;
     }
@@ -252,8 +256,10 @@ static int handle_compress(struct mg_connection *conn, void *cbdata) {
         mg_printf(conn,
                   "HTTP/1.1 200 OK\r\n"
                   "Access-Control-Allow-Origin: *\r\n"
+              "Access-Control-Allow-Private-Network: true\r\n"
+                  "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Methods: POST, OPTIONS\r\n"
-                  "Access-Control-Allow-Headers: Content-Type\r\n"
+                  "Access-Control-Allow-Headers: *\r\n"
                   "Content-Length: 0\r\n\r\n");
         return 200;
     }
@@ -374,8 +380,10 @@ static int handle_decompress(struct mg_connection *conn, void *cbdata) {
         mg_printf(conn,
                   "HTTP/1.1 200 OK\r\n"
                   "Access-Control-Allow-Origin: *\r\n"
+              "Access-Control-Allow-Private-Network: true\r\n"
+                  "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Methods: POST, OPTIONS\r\n"
-                  "Access-Control-Allow-Headers: Content-Type\r\n"
+                  "Access-Control-Allow-Headers: *\r\n"
                   "Content-Length: 0\r\n\r\n");
         return 200;
     }
@@ -559,6 +567,7 @@ static int handle_download(struct mg_connection *conn, void *cbdata) {
               "Content-Disposition: attachment; filename=\"%s\"\r\n"
               "Content-Length: %ld\r\n"
               "Access-Control-Allow-Origin: *\r\n"
+              "Access-Control-Allow-Private-Network: true\r\n"
               "Connection: close\r\n\r\n",
               download_filename, file_len);
               

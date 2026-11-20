@@ -69,6 +69,25 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    /* Print help / usage */
+    if (argc >= 2 && (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0)) {
+        printf("====================================================================\n");
+        printf("                     HUFFMAN LAB - TERMINAL CLI                     \n");
+        printf("            Data Compression & Algorithm Visualizer                 \n");
+        printf("====================================================================\n");
+        printf("Usage:\n");
+        printf("  1. Run Web Server & API:\n");
+        printf("     ./huffman_server.exe [port]           (Default port: 8080)\n\n");
+        printf("  2. Direct Terminal Compression:\n");
+        printf("     ./huffman_server.exe --compress <input_file> <output.huff>\n\n");
+        printf("  3. Direct Terminal Decompression:\n");
+        printf("     ./huffman_server.exe --decompress <input.huff> <recovered_file>\n\n");
+        printf("  4. Help & Information:\n");
+        printf("     ./huffman_server.exe --help\n");
+        printf("====================================================================\n");
+        return 0;
+    }
+
     /* Parse port if provided: ./server [port] */
     if (argc >= 2) {
         int p = atoi(argv[1]);

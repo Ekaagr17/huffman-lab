@@ -8,6 +8,7 @@ const App = {
   recentHistory: [],
 
   init() {
+    this.checkProtocol();
     this.setupTabs();
     this.setupUpload();
     this.setupSampleButtons();
@@ -17,9 +18,29 @@ const App = {
     this.checkServerHealth();
   },
 
+  checkProtocol() {
+    if (window.location.protocol === 'file:') {
+      const banner = document.getElementById('protocol-warning-banner');
+      if (banner) banner.style.display = 'block';
+      this.showToast('Notice: Please open http://localhost:8080/ in Chrome to communicate with C backend', 'info');
+    }
+  },
+
+  formatError(err) {
+    if (!err) return 'An unexpected error occurred.';
+    let msg = err.message || err.toString();
+    if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+      if (window.location.protocol === 'file:') {
+        return 'Chrome blocks API requests from file:///. Please open http://localhost:8080/ in your browser.';
+      }
+      return 'Cannot reach C backend server. Please ensure .\\huffman_server.exe 8080 is running.';
+    }
+    return msg;
+  },
+
   async checkServerHealth() {
     try {
-      await fetch('/api/health', { method: 'GET' });
+      await API.request('/api/health', { method: 'GET' });
     } catch (e) {
       // Backend may be starting
     }
@@ -45,10 +66,14 @@ const App = {
     });
 
     if (viewId === 'visualizer') {
+      requestAnimationFrame(() => {
+        TreeVisualizer.resizeCanvas();
+        TreeVisualizer.fitView();
+      });
       setTimeout(() => {
         TreeVisualizer.resizeCanvas();
         TreeVisualizer.fitView();
-      }, 60);
+      }, 100);
     }
   },
 
@@ -152,12 +177,12 @@ const App = {
 
       // Load tree
       const treeRes = await API.getTree(data.id);
-      TreeVisualizer.loadTree(treeRes.tree);
+      TreeVisualizer.loadTree(treeRes.tree, this.selectedFile ? this.selectedFile.name : 'file');
 
       this.switchTab('analysis');
       this.showToast('Frequency analysis complete!', 'success');
     } catch (err) {
-      this.showToast(err.message, 'error');
+      this.showToast(this.formatError(err), 'error');
     }
   },
 
@@ -171,7 +196,7 @@ const App = {
 
       // Update tree visualizer with backend tree
       const treeRes = await API.getTree(result.id);
-      TreeVisualizer.loadTree(treeRes.tree);
+      TreeVisualizer.loadTree(treeRes.tree, this.selectedFile ? this.selectedFile.name : 'file');
 
       // Update analysis tab as well
       const analysisData = await API.analyzeFile(this.selectedFile);
@@ -182,7 +207,7 @@ const App = {
       this.switchTab('results');
       this.showToast('Compression completed successfully!', 'success');
     } catch (err) {
-      this.showToast(err.message, 'error');
+      this.showToast(this.formatError(err), 'error');
     }
   },
 
@@ -288,7 +313,7 @@ const App = {
 
       this.showToast('File decompressed with 100% fidelity!', 'success');
     } catch (err) {
-      this.showToast(`Decompression failed: ${err.message}`, 'error');
+      this.showToast(`Decompression failed: ${this.formatError(err)}`, 'error');
     }
   },
 

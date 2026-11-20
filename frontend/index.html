@@ -9,6 +9,12 @@
 </head>
 <body>
 
+  <!-- Direct File Protocol Warning Banner (shown if opened via file:///) -->
+  <div id="protocol-warning-banner" style="display: none; background: #D97757; color: #ffffff; padding: 0.75rem 1.5rem; text-align: center; font-size: 0.9rem; font-weight: 500; border-bottom: 2px solid rgba(0,0,0,0.15);">
+    ⚠️ <strong>Direct File Mode (file:///):</strong> Browser security policies block backend API calls when opened directly from disk.
+    Please open <strong><a href="http://localhost:8080/" style="color: #ffffff; font-weight: 700; text-decoration: underline; margin: 0 0.25rem;">http://localhost:8080/</a></strong> in Chrome.
+  </div>
+
   <!-- Header -->
   <header class="app-header">
     <div class="brand">
@@ -147,10 +153,15 @@
 
     <!-- View: Plain Single Huffman Tree -->
     <section id="view-visualizer" class="view-section">
-      <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-        <h1 style="font-size: 1.6rem;">Huffman Tree</h1>
+      <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h1 style="font-size: 1.6rem; margin-bottom: 0.25rem;">Huffman Tree Diagram</h1>
+          <p class="text-steel" style="font-size: 0.85rem;" id="viz-tree-subtitle">Canonical textbook binary encoding tree generated from C backend.</p>
+        </div>
         
-        <div class="toolbar-group">
+        <div class="toolbar-group" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button class="btn btn-primary btn-sm" id="btn-download-tree-png" title="Download High-Res PNG Image">Download Diagram Image (.PNG)</button>
+          <button class="btn btn-secondary btn-sm" id="btn-download-tree-svg" title="Export as Vector SVG">Export SVG</button>
           <button class="btn btn-secondary btn-sm" id="viz-zoom-in" title="Zoom In">+</button>
           <button class="btn btn-secondary btn-sm" id="viz-zoom-out" title="Zoom Out">-</button>
           <button class="btn btn-secondary btn-sm" id="viz-fit" title="Fit to View">Fit View</button>
@@ -237,13 +248,26 @@
           </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--stone);">
+        <!-- Compression Mechanics Explanation -->
+        <div style="margin-top: 1.25rem; padding: 0.9rem 1rem; background-color: #faf8f5; border: 1px solid var(--stone); border-radius: var(--radius-sm); font-size: 0.85rem; line-height: 1.5; color: var(--steel-grey);">
+          <strong style="color: var(--ink-navy); display: block; margin-bottom: 0.25rem;">Why compression ratios vary by file type:</strong>
+          <ul style="margin: 0; padding-left: 1.2rem;">
+            <li><strong>Pre-compressed files (.docx, .pdf, .zip, .png, .jpg):</strong> Already compressed by DEFLATE or DCT; byte entropy is near 8.0 bits/byte, so lossless Huffman coding cannot compress them further.</li>
+            <li><strong>Small files (&lt; 500 bytes):</strong> Carry header metadata (~45 bytes: magic number, file size, symbol frequencies) which adds overhead on tiny payloads.</li>
+            <li><strong>Text, source code, repeated patterns, uncompressed data:</strong> Skewed frequency distribution yields significant 30%–70% size reduction.</li>
+          </ul>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--stone); flex-wrap: wrap; gap: 1rem;">
           <div>
             <div class="stat-label">Checksum</div>
             <div class="mono" id="res-hash" style="font-size: 0.85rem; color: var(--ink-navy); font-weight: 600;">-</div>
           </div>
 
-          <div style="display: flex; gap: 1rem;">
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="btn-results-download-tree">
+              Download Tree Diagram (.PNG)
+            </button>
             <button class="btn btn-secondary" onclick="App.switchTab('visualizer')">
               View Tree
             </button>
