@@ -1,17 +1,8 @@
-/**
- * Huffman Lab - Textbook Huffman Tree Visualizer
- * Accurately replicates canonical textbook Huffman tree schematics:
- * - Rectangular nodes with top frequency/probability and bottom edge bit / ROOT
- * - Leaf nodes with attached circular symbol badges
- * - Clean angled branches with no overlapping nodes
- * - High-resolution PNG and SVG diagram export
- */
 const TreeVisualizer = {
   treeData: null,
   treeLayout: null,
   currentFilename: 'file',
   
-  // Viewport transforms (Pan & Zoom)
   scale: 1,
   panX: 0,
   panY: 0,
@@ -23,7 +14,6 @@ const TreeVisualizer = {
   ctx: null,
   nodeMap: new Map(),
 
-  // Node Dimensions matching textbook specifications
   BOX_W: 54,
   BOX_H: 34,
   Y_STEP: 86,
@@ -40,7 +30,6 @@ const TreeVisualizer = {
       this.draw();
     });
 
-    // ResizeObserver to detect when the tab becomes visible
     if (window.ResizeObserver && this.canvas.parentElement) {
       const ro = new ResizeObserver(() => {
         if (this.canvas.parentElement.clientWidth > 50) {
@@ -59,7 +48,6 @@ const TreeVisualizer = {
     const container = this.canvas.parentElement;
     const rect = container ? container.getBoundingClientRect() : null;
     
-    // Fallback if tab is hidden during initial load
     let w = (rect && rect.width > 50) ? rect.width : (window.innerWidth ? Math.max(800, window.innerWidth - 320) : 960);
     let h = (rect && rect.height > 50) ? rect.height : 560;
 
@@ -105,7 +93,6 @@ const TreeVisualizer = {
     document.getElementById('viz-zoom-out')?.addEventListener('click', () => this.zoom(0.8));
     document.getElementById('viz-fit')?.addEventListener('click', () => this.fitView());
 
-    // Export buttons
     document.getElementById('btn-download-tree-png')?.addEventListener('click', () => this.exportPNG());
     document.getElementById('btn-download-tree-svg')?.addEventListener('click', () => this.exportSVG());
     document.getElementById('btn-results-download-tree')?.addEventListener('click', () => this.exportPNG());
@@ -123,17 +110,11 @@ const TreeVisualizer = {
       }
     }
 
-    // Build hierarchical tree structure if not directly provided
     const rootHierarchy = data.hierarchy || this.buildHierarchyFromNodes(data.root_id);
     const totalFreq = data.total_freq || (rootHierarchy ? rootHierarchy.freq : 1);
 
-    // Compute deterministic layout
     this.treeLayout = this.buildLayout(rootHierarchy, totalFreq);
-
-    // Render codebook table
     this.renderCodebook(data.codes);
-
-    // Fit and render view
     this.fitView();
   },
 
@@ -170,7 +151,6 @@ const TreeVisualizer = {
   buildLayout(root, totalFreq) {
     if (!root) return null;
 
-    // 1. Collect all leaves in in-order traversal
     const leaves = [];
     const collectLeaves = (u) => {
       if (!u) return;
@@ -186,7 +166,6 @@ const TreeVisualizer = {
     const numLeaves = leaves.length;
     const leafGap = this.LEAF_GAP;
 
-    // Assign x coordinates to leaves with uniform spacing
     const leafXMap = new Map();
     leaves.forEach((leaf, idx) => {
       leafXMap.set(leaf.id, idx * leafGap);
@@ -196,7 +175,6 @@ const TreeVisualizer = {
     let maxX = -Infinity;
     let maxY = 0;
 
-    // 2. Post-order traversal: parents centered at (left.x + right.x) / 2
     const assignCoords = (u, depth, isLeftChild, isRoot = false) => {
       if (!u) return null;
 
@@ -286,7 +264,6 @@ const TreeVisualizer = {
     const treeW = this.treeLayout.width;
     const treeH = this.treeLayout.height;
 
-    // Fit view with balanced margin
     const scaleX = (canvasW - 60) / treeW;
     const scaleY = (canvasH - 80) / treeH;
     let targetScale = Math.min(scaleX, scaleY);
@@ -307,7 +284,6 @@ const TreeVisualizer = {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Subtle background
     ctx.fillStyle = '#faf8f5';
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -323,7 +299,6 @@ const TreeVisualizer = {
     ctx.translate(this.panX, this.panY);
     ctx.scale(this.scale, this.scale);
 
-    // Draw tree recursively
     this.renderSubtree(ctx, this.treeLayout.root, this.treeLayout.totalFreq);
 
     ctx.restore();
@@ -334,7 +309,6 @@ const TreeVisualizer = {
 
     const HALF_H = this.BOX_H / 2;
 
-    // Draw straight angled branches from parent bottom to child top
     if (layoutNode.left) {
       ctx.beginPath();
       ctx.moveTo(layoutNode.x, layoutNode.y + HALF_H);
@@ -357,7 +331,6 @@ const TreeVisualizer = {
       this.renderSubtree(ctx, layoutNode.right, totalFreq);
     }
 
-    // Draw textbook node
     this.drawNode(ctx, layoutNode, totalFreq);
   },
 
@@ -368,20 +341,17 @@ const TreeVisualizer = {
     const HALF_W = BOX_W / 2;
     const HALF_H = BOX_H / 2;
 
-    // 1. Rectangular Box
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(x - HALF_W, y - HALF_H, BOX_W, BOX_H);
     ctx.strokeStyle = '#1a1a1a';
     ctx.lineWidth = 1.4;
     ctx.strokeRect(x - HALF_W, y - HALF_H, BOX_W, BOX_H);
 
-    // 2. Horizontal Divider
     ctx.beginPath();
     ctx.moveTo(x - HALF_W, y);
     ctx.lineTo(x + HALF_W, y);
     ctx.stroke();
 
-    // 3. Top Half: Probability / Frequency Weight
     let probStr = '0.0000';
     if (isRoot) {
       probStr = '1.0000';
@@ -397,7 +367,6 @@ const TreeVisualizer = {
     ctx.textBaseline = 'middle';
     ctx.fillText(probStr, x, y - 8.5);
 
-    // 4. Bottom Half: 'ROOT' or edge bit '0'/'1'
     if (isRoot) {
       ctx.font = 'bold 9px Arial, sans-serif';
       ctx.fillText('ROOT', x, y + 8.5);
@@ -406,13 +375,11 @@ const TreeVisualizer = {
       ctx.fillText(bit || '0', x, y + 8.5);
     }
 
-    // 5. Leaf Node: Vertical connector stem + Circle with Symbol Glyph
     if (isLeaf) {
       const stemLength = 8;
       const circleRadius = 12;
       const circleY = y + HALF_H + stemLength + circleRadius;
 
-      // Vertical stem
       ctx.beginPath();
       ctx.moveTo(x, y + HALF_H);
       ctx.lineTo(x, y + HALF_H + stemLength);
@@ -420,7 +387,6 @@ const TreeVisualizer = {
       ctx.lineWidth = 1.4;
       ctx.stroke();
 
-      // Circle badge
       ctx.beginPath();
       ctx.arc(x, circleY, circleRadius, 0, Math.PI * 2);
       ctx.fillStyle = '#FFFFFF';
@@ -429,7 +395,6 @@ const TreeVisualizer = {
       ctx.lineWidth = 1.4;
       ctx.stroke();
 
-      // Symbol glyph inside circle
       const glyph = this.formatSymbolGlyph(node);
       ctx.fillStyle = '#1a1a1a';
       ctx.font = glyph.length > 2 ? 'bold 8.5px Arial, sans-serif' : 'bold 11px Arial, sans-serif';
@@ -453,7 +418,6 @@ const TreeVisualizer = {
     if (sym >= 33 && sym <= 126) {
       return String.fromCharCode(sym);
     }
-    // Binary hex representation
     return sym.toString(16).toUpperCase().padStart(2, '0');
   },
 
@@ -464,7 +428,7 @@ const TreeVisualizer = {
     }
 
     const padding = 50;
-    const dpr = 2; // Crisp 2x retina resolution for high print quality
+    const dpr = 2;
     const treeW = Math.max(200, this.treeLayout.maxX - this.treeLayout.minX + this.BOX_W + 40);
     const treeH = Math.max(200, this.treeLayout.maxY + 50);
 
@@ -477,11 +441,9 @@ const TreeVisualizer = {
     const oCtx = offscreen.getContext('2d');
 
     oCtx.scale(dpr, dpr);
-    // Crisp white background
     oCtx.fillStyle = '#FFFFFF';
     oCtx.fillRect(0, 0, width, height);
 
-    // Title header on exported image
     oCtx.fillStyle = '#202A35';
     oCtx.font = 'bold 14px Arial, sans-serif';
     oCtx.textAlign = 'left';
@@ -490,14 +452,12 @@ const TreeVisualizer = {
     oCtx.fillStyle = '#65717D';
     oCtx.fillText(`Total Bytes: ${this.treeLayout.totalFreq} | Unique Symbols: ${this.treeLayout.numLeaves}`, padding, 44);
 
-    // Center tree on offscreen canvas
     const offsetX = padding - this.treeLayout.minX + 20;
     const offsetY = padding + 30;
     oCtx.translate(offsetX, offsetY);
 
     this.renderSubtree(oCtx, this.treeLayout.root, this.treeLayout.totalFreq);
 
-    // Download PNG
     try {
       const dataUrl = offscreen.toDataURL('image/png');
       const a = document.createElement('a');
@@ -537,7 +497,6 @@ const TreeVisualizer = {
       const HALF_W = this.BOX_W / 2;
       const HALF_H = this.BOX_H / 2;
 
-      // Edges
       if (ln.left) {
         const lx = ln.left.x + offsetX;
         const ly = ln.left.y + offsetY;
@@ -551,7 +510,6 @@ const TreeVisualizer = {
         traverse(ln.right);
       }
 
-      // Box
       let probStr = '0.0000';
       if (ln.isRoot) probStr = '1.0000';
       else if (this.treeLayout.totalFreq > 0) probStr = (ln.node.freq / this.treeLayout.totalFreq).toFixed(4);

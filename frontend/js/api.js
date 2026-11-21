@@ -1,18 +1,8 @@
-/**
- * Huffman Lab API Client
- * Clean interface to the C CivetWeb backend with multi-origin fallback
- */
 const API = {
-  // Determine backend base URL:
-  // If loaded directly via http: or https: on port 8080, relative URLs work.
-  // If loaded via file:/// or an alternative port/tool, fallback to http://localhost:8080.
   baseUrl: (window.location.protocol === 'file:' || (window.location.port !== '8080' && window.location.port !== ''))
     ? 'http://localhost:8080'
     : '',
 
-  /**
-   * Robust fetch wrapper with automatic fallback across localhost and 127.0.0.1
-   */
   async request(endpoint, options = {}) {
     const urls = [];
     if (this.baseUrl) {
@@ -36,11 +26,6 @@ const API = {
     throw lastError;
   },
 
-  /**
-   * Upload and analyze a file's byte frequencies
-   * @param {File|Blob} file 
-   * @param {string} [filename]
-   */
   async analyzeFile(file, filename) {
     const formData = new FormData();
     formData.append('file', file, filename || file.name || 'unnamed.bin');
@@ -57,10 +42,6 @@ const API = {
     return data;
   },
 
-  /**
-   * Compress file (either by existing analyzed ID or by fresh upload)
-   * @param {string|File} input 
-   */
   async compress(input) {
     let res;
     if (typeof input === 'string') {
@@ -85,10 +66,6 @@ const API = {
     return data;
   },
 
-  /**
-   * Upload .huff file and decompress
-   * @param {File} file 
-   */
   async decompressFile(file) {
     const formData = new FormData();
     formData.append('file', file, file.name);
@@ -105,10 +82,6 @@ const API = {
     return data;
   },
 
-  /**
-   * Fetch tree structure and construction steps
-   * @param {string} id 
-   */
   async getTree(id) {
     const res = await this.request(`/api/tree/${id}`);
     const data = await res.json();
@@ -118,10 +91,6 @@ const API = {
     return data;
   },
 
-  /**
-   * Fetch complete result stats
-   * @param {string} id 
-   */
   async getResult(id) {
     const res = await this.request(`/api/result/${id}`);
     const data = await res.json();
@@ -131,11 +100,6 @@ const API = {
     return data;
   },
 
-  /**
-   * Construct download link
-   * @param {string} id 
-   * @param {string} type ('compressed' or 'decompressed')
-   */
   getDownloadUrl(id, type = 'compressed') {
     const base = this.baseUrl || '';
     return `${base}/api/download/${id}?type=${encodeURIComponent(type)}`;

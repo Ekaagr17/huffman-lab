@@ -118,7 +118,6 @@ HuffmanNode* huffman_build_tree(const FrequencyTable *ft, ConstructionHistory *h
     MinHeap *heap = minheap_create(ft->unique_symbols * 2);
     if (!heap) return NULL;
     
-    /* Populate MinHeap with leaf nodes */
     for (int i = 0; i < MAX_SYMBOLS; i++) {
         if (ft->counts[i] > 0) {
             HuffmanNode *leaf = huffman_node_create_leaf(next_id++, (uint8_t)i, ft->counts[i]);
@@ -126,7 +125,6 @@ HuffmanNode* huffman_build_tree(const FrequencyTable *ft, ConstructionHistory *h
         }
     }
     
-    /* Build tree by repeatedly combining 2 lowest frequency nodes */
     while (minheap_size(heap) > 1) {
         HuffmanNode *left = minheap_extract_min(heap);
         HuffmanNode *right = minheap_extract_min(heap);
@@ -156,7 +154,6 @@ HuffmanNode* huffman_build_tree(const FrequencyTable *ft, ConstructionHistory *h
     return root;
 }
 
-/* Helper to format symbol label for display */
 static void format_symbol_label(uint16_t symbol, char *out, size_t out_len) {
     if (symbol > 255) {
         snprintf(out, out_len, "Internal");
@@ -178,7 +175,6 @@ static void format_symbol_label(uint16_t symbol, char *out, size_t out_len) {
     }
 }
 
-/* Helper to generate codes recursively for JSON representation */
 static void collect_codes_json(const HuffmanNode *node, char *prefix, int depth, cJSON *codes_obj) {
     if (!node) return;
     if (node->is_leaf) {
@@ -204,7 +200,6 @@ static void collect_codes_json(const HuffmanNode *node, char *prefix, int depth,
     collect_codes_json(node->right, prefix, depth + 1, codes_obj);
 }
 
-/* Helper to collect all nodes into a flat list for visualizer quick lookup */
 static void collect_nodes_json(const HuffmanNode *node, cJSON *nodes_arr) {
     if (!node) return;
     
@@ -240,7 +235,6 @@ static void collect_nodes_json(const HuffmanNode *node, cJSON *nodes_arr) {
     collect_nodes_json(node->right, nodes_arr);
 }
 
-/* Recursive hierarchy builder for tree rendering */
 static cJSON* build_hierarchy_json(const HuffmanNode *node, const char *edge_label) {
     if (!node) return NULL;
     
@@ -287,22 +281,18 @@ cJSON* huffman_tree_to_json(const HuffmanNode *root, const ConstructionHistory *
     cJSON_AddNumberToObject(root_obj, "total_freq", (double)root->freq);
     cJSON_AddNumberToObject(root_obj, "unique_symbols", ft ? ft->unique_symbols : 0);
     
-    /* Flat node registry */
     cJSON *nodes_arr = cJSON_CreateArray();
     collect_nodes_json(root, nodes_arr);
     cJSON_AddItemToObject(root_obj, "nodes", nodes_arr);
     
-    /* Hierarchical tree structure */
     cJSON *hierarchy = build_hierarchy_json(root, NULL);
     cJSON_AddItemToObject(root_obj, "hierarchy", hierarchy);
     
-    /* Code dictionary */
     cJSON *codes_obj = cJSON_CreateObject();
     char prefix[MAX_SYMBOLS + 1];
     collect_codes_json(root, prefix, 0, codes_obj);
     cJSON_AddItemToObject(root_obj, "codes", codes_obj);
     
-    /* Construction steps */
     cJSON *steps_arr = cJSON_CreateArray();
     if (history && history->steps) {
         for (size_t i = 0; i < history->count; i++) {

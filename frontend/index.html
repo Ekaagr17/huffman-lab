@@ -9,13 +9,11 @@
 </head>
 <body>
 
-  <!-- Direct File Protocol Warning Banner (shown if opened via file:///) -->
   <div id="protocol-warning-banner" style="display: none; background: #D97757; color: #ffffff; padding: 0.75rem 1.5rem; text-align: center; font-size: 0.9rem; font-weight: 500; border-bottom: 2px solid rgba(0,0,0,0.15);">
     ⚠️ <strong>Direct File Mode (file:///):</strong> Browser security policies block backend API calls when opened directly from disk.
     Please open <strong><a href="http://localhost:8080/" style="color: #ffffff; font-weight: 700; text-decoration: underline; margin: 0 0.25rem;">http://localhost:8080/</a></strong> in Chrome.
   </div>
 
-  <!-- Header -->
   <header class="app-header">
     <div class="brand">
       <span class="brand-title">Huffman Lab</span>
@@ -30,17 +28,14 @@
     </nav>
   </header>
 
-  <!-- Main Content Area -->
   <main class="main-content">
 
-    <!-- View: Dashboard -->
     <section id="view-dashboard" class="view-section active">
       <div style="margin-bottom: 1.5rem;">
         <h1 style="font-size: 1.6rem;">Data Compression &amp; Huffman Coding</h1>
       </div>
 
       <div style="margin-bottom: 1.5rem;">
-        <!-- Upload Card -->
         <div class="card">
           <div class="card-header">
             <h2 class="card-title">File Input</h2>
@@ -76,24 +71,19 @@
         </div>
       </div>
 
-      <!-- History Card -->
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">Recently Processed Files</h2>
         </div>
-        <div id="recent-history-list">
-          <!-- Populated dynamically -->
-        </div>
+        <div id="recent-history-list"></div>
       </div>
     </section>
 
-    <!-- View: Frequency Analysis -->
     <section id="view-analysis" class="view-section">
       <div style="margin-bottom: 1.5rem;">
         <h1 style="font-size: 1.6rem;">Byte Frequency Analysis</h1>
       </div>
 
-      <!-- Metric Cards -->
       <div class="grid-3col" style="margin-bottom: 1.5rem;">
         <div class="stat-box">
           <div class="stat-label">File</div>
@@ -113,17 +103,13 @@
         </div>
       </div>
 
-      <!-- Distribution Chart -->
       <div class="card" style="margin-bottom: 1.5rem;">
         <div class="card-header">
           <h2 class="card-title">Frequency Distribution</h2>
         </div>
-        <div class="chart-container" id="freq-chart-container">
-          <!-- SVG Chart rendered here -->
-        </div>
+        <div class="chart-container" id="freq-chart-container"></div>
       </div>
 
-      <!-- Frequency Table -->
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">Symbol Frequency Table</h2>
@@ -143,15 +129,12 @@
                 <th style="width: 200px;">Distribution</th>
               </tr>
             </thead>
-            <tbody id="freq-table-body">
-              <!-- Populated dynamically -->
-            </tbody>
+            <tbody id="freq-table-body"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <!-- View: Plain Single Huffman Tree -->
     <section id="view-visualizer" class="view-section">
       <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
         <div>
@@ -169,12 +152,10 @@
       </div>
 
       <div class="visualizer-wrapper">
-        <!-- Canvas Stage -->
         <div class="visualizer-stage" id="tree-stage">
           <canvas id="tree-canvas" class="canvas-viewport"></canvas>
         </div>
 
-        <!-- Generated Codebook Table -->
         <div class="card" style="margin-top: 1rem;">
           <div class="card-header">
             <h2 class="card-title">Huffman Code Book</h2>
@@ -191,16 +172,13 @@
                   <th>Length &amp; Total Bits</th>
                 </tr>
               </thead>
-              <tbody id="codebook-body">
-                <!-- Dynamic codes -->
-              </tbody>
+              <tbody id="codebook-body"></tbody>
             </table>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- View: Compression Results -->
     <section id="view-results" class="view-section">
       <div style="margin-bottom: 1.5rem;">
         <h1 style="font-size: 1.6rem;">Compression Results</h1>
@@ -248,7 +226,6 @@
           </div>
         </div>
 
-        <!-- Compression Mechanics Explanation -->
         <div style="margin-top: 1.25rem; padding: 0.9rem 1rem; background-color: #faf8f5; border: 1px solid var(--stone); border-radius: var(--radius-sm); font-size: 0.85rem; line-height: 1.5; color: var(--steel-grey);">
           <strong style="color: var(--ink-navy); display: block; margin-bottom: 0.25rem;">Why compression ratios vary by file type:</strong>
           <ul style="margin: 0; padding-left: 1.2rem;">
@@ -279,7 +256,6 @@
       </div>
     </section>
 
-    <!-- View: Decompression -->
     <section id="view-decompress" class="view-section">
       <div style="margin-bottom: 1.5rem;">
         <h1 style="font-size: 1.6rem;">Decompress File</h1>
@@ -297,7 +273,6 @@
         </div>
       </div>
 
-      <!-- Decompression Result Box -->
       <div class="card" id="decompress-result-box" style="display: none;">
         <div class="card-header">
           <h2 class="card-title" style="color: var(--muted-sage-dark);">Decompression Complete</h2>
@@ -332,10 +307,8 @@
 
   </main>
 
-  <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- Scripts with versioning -->
   <script src="js/api.js?v=2.0"></script>
   <script src="js/analysis.js?v=2.0"></script>
   <script src="js/visualizer.js?v=2.0"></script>

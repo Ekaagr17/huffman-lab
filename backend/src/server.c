@@ -60,7 +60,6 @@ static void send_json_response(struct mg_connection *conn, int status_code, cJSO
               "Content-Length: %lu\r\n"
               "Access-Control-Allow-Origin: *\r\n"
               "Access-Control-Allow-Private-Network: true\r\n"
-              "Access-Control-Allow-Private-Network: true\r\n"
               "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
               "Access-Control-Allow-Headers: *\r\n"
               "Connection: close\r\n\r\n",
@@ -148,7 +147,6 @@ static int handle_analyze(struct mg_connection *conn, void *cbdata) {
         mg_printf(conn,
                   "HTTP/1.1 200 OK\r\n"
                   "Access-Control-Allow-Origin: *\r\n"
-              "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Methods: POST, OPTIONS\r\n"
                   "Access-Control-Allow-Headers: *\r\n"
@@ -265,7 +263,6 @@ static int handle_compress(struct mg_connection *conn, void *cbdata) {
         mg_printf(conn,
                   "HTTP/1.1 200 OK\r\n"
                   "Access-Control-Allow-Origin: *\r\n"
-              "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Methods: POST, OPTIONS\r\n"
                   "Access-Control-Allow-Headers: *\r\n"
@@ -389,7 +386,6 @@ static int handle_decompress(struct mg_connection *conn, void *cbdata) {
         mg_printf(conn,
                   "HTTP/1.1 200 OK\r\n"
                   "Access-Control-Allow-Origin: *\r\n"
-              "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Private-Network: true\r\n"
                   "Access-Control-Allow-Methods: POST, OPTIONS\r\n"
                   "Access-Control-Allow-Headers: *\r\n"

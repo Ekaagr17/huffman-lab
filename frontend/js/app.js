@@ -1,6 +1,3 @@
-/**
- * Huffman Lab - Main Application Coordinator
- */
 const App = {
   selectedFile: null,
   currentAnalysis: null,
@@ -42,7 +39,6 @@ const App = {
     try {
       await API.request('/api/health', { method: 'GET' });
     } catch (e) {
-      // Backend may be starting
     }
   },
 
@@ -175,7 +171,6 @@ const App = {
       this.currentAnalysis = data;
       AnalysisModule.render(data);
 
-      // Load tree
       const treeRes = await API.getTree(data.id);
       TreeVisualizer.loadTree(treeRes.tree, this.selectedFile ? this.selectedFile.name : 'file');
 
@@ -194,11 +189,9 @@ const App = {
       const result = await API.compress(this.selectedFile);
       this.currentCompressionResult = result;
 
-      // Update tree visualizer with backend tree
       const treeRes = await API.getTree(result.id);
       TreeVisualizer.loadTree(treeRes.tree, this.selectedFile ? this.selectedFile.name : 'file');
 
-      // Update analysis tab as well
       const analysisData = await API.analyzeFile(this.selectedFile);
       AnalysisModule.render(analysisData);
 
@@ -229,7 +222,6 @@ const App = {
 
     document.getElementById('res-hash').textContent = res.original_hash || 'Computed';
 
-    // Comparison bars
     const maxVal = Math.max(res.original_size, res.compressed_size) || 1;
     const origPct = Math.round((res.original_size / maxVal) * 100);
     const compPct = Math.round((res.compressed_size / maxVal) * 100);
@@ -245,7 +237,6 @@ const App = {
       compBar.textContent = AnalysisModule.formatBytes(res.compressed_size);
     }
 
-    // Setup download button
     const dlBtn = document.getElementById('btn-download-compressed');
     if (dlBtn) {
       dlBtn.onclick = () => {

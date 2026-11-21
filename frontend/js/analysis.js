@@ -1,31 +1,18 @@
-/**
- * Frequency Analysis Module
- * Renders file metrics, frequency table, and distribution chart
- */
 const AnalysisModule = {
   currentData: null,
 
-  /**
-   * Render analysis view with data from C backend
-   * @param {Object} data 
-   */
   render(data) {
     this.currentData = data;
 
-    // File Summary Info
     document.getElementById('analysis-filename').textContent = data.filename || 'Unknown';
     document.getElementById('analysis-filesize').textContent = this.formatBytes(data.original_size);
     document.getElementById('analysis-bytes').textContent = data.original_size.toLocaleString();
     document.getElementById('analysis-unique').textContent = `${data.unique_symbols} / 256`;
 
-    // Compute Shannon Entropy
     const entropy = this.calculateEntropy(data.frequencies, data.original_size);
     document.getElementById('analysis-entropy').textContent = `${entropy.toFixed(3)} bits/byte`;
 
-    // Render Table
     this.renderTable(data.frequencies, data.original_size);
-
-    // Render Chart
     this.renderChart(data.frequencies, data.original_size);
   },
 
@@ -92,7 +79,6 @@ const AnalysisModule = {
       return;
     }
 
-    // Show top 32 frequent symbols
     const top = frequencies.slice(0, 32);
     const maxCount = top[0]?.count || 1;
 
@@ -104,11 +90,8 @@ const AnalysisModule = {
     const barW = Math.max(8, (chartW / top.length) - 4);
 
     let svg = `<svg width="100%" height="100%" viewBox="0 0 ${width} ${height}" style="overflow:visible;">`;
-
-    // Baseline axis
     svg += `<line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke="var(--stone)" stroke-width="1" />`;
 
-    // Bars
     top.forEach((item, i) => {
       const x = padding.left + i * (chartW / top.length) + 2;
       const h = (item.count / maxCount) * chartH;
